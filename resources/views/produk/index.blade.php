@@ -98,7 +98,7 @@
 
                                     <div class="mb-3">
                                         <label for="Deskripsi{{ $produk->id }}" class="form-label fw-semibold">Deskripsi</label>
-                                        <input id="Deskripsi{{ $produk->id }}" type="text" name="Deskripsi" class="form-control" value="{{ $produk->Deskripsi }}" required />
+                                        <input id="Deskripsi{{ $produk->id }}" type="text" name="Deskripsi" class="form-control" value="{{ $produk->Deskripsi }}" />
                                         <div class="invalid-feedback">Mohon masukkan Deskripsi Produk.</div>
                                     </div>
 

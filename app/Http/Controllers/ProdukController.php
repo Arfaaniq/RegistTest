@@ -33,9 +33,9 @@ class ProdukController extends Controller
     {
         $validated = $request->validate([
             'Nama_produk' => 'required|string|max:255',
-            'Deskripsi' => 'required|string|max:255',
-            'Harga' => 'required|integer|nullable',
-            'Stok' => 'required|integer|nullable',
+            'Deskripsi' => 'nullable|string|max:500',
+            'Harga' => 'required|integer|required',
+            'Stok' => 'required|integer|required',
         ]);
 
         Produk::create($validated);
