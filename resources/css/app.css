@@ -1,3 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.main-content {
+    padding-top: 100px; /* atur sesuai tinggi header/navbar kamu */
+}
