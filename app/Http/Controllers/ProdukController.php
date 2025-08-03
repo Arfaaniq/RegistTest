@@ -35,27 +35,28 @@ class ProdukController extends Controller
         return view('produk.create');
     }
 
-
     public function store(Request $request)
     {
         $validated = $request->validate([
             'Nama_produk' => 'required|string|max:255',
-            'Deskripsi' => 'nullable|string|max:1000', // Sudah dinaikkan ke 1000
+            'Deskripsi' => 'nullable|string|max:1000',
             'Harga' => 'required|integer',
             'Stok' => 'required|integer',
         ]);
 
-        $validated['user_id'] = auth()->id();
+        /** @var \App\Models\User $user */
+        $user = auth()->user();
+        $validated['user_id'] = $user->id;
 
         $produk = Produk::create($validated);
 
         // Catat history pembuatan produk
         ProdukHistory::create([
             'produk_id' => $produk->id,
-            'user_id' => auth()->id(),
+            'user_id' => $user->id,
             'action' => 'created',
             'new_values' => $validated,
-            'changes_description' => 'Produk baru dibuat oleh ' . auth()->user()->name
+            'changes_description' => 'Produk baru dibuat oleh ' . $user->name
         ]);
 
         return redirect()->route('produk.index')->with('success', 'Produk berhasil ditambahkan');
@@ -74,6 +75,9 @@ class ProdukController extends Controller
             'Harga' => 'required|integer',
             'Stok' => 'required|integer',
         ]);
+
+        /** @var \App\Models\User $user */
+        $user = auth()->user();
 
         // Simpan nilai lama sebelum update
         $oldValues = $produk->only(['Nama_produk', 'Deskripsi', 'Harga', 'Stok']);
@@ -99,30 +103,33 @@ class ProdukController extends Controller
         if (!empty($changes)) {
             ProdukHistory::create([
                 'produk_id' => $produk->id,
-                'user_id' => auth()->id(),
+                'user_id' => $user->id,
                 'action' => 'updated',
                 'old_values' => $oldValues,
                 'new_values' => $validated,
-                'changes_description' => 'Diperbarui oleh ' . auth()->user()->name . ': ' . implode(', ', $changes)
+                'changes_description' => 'Diperbarui oleh ' . $user->name . ': ' . implode(', ', $changes)
             ]);
         }
 
-        return redirect()->route('produk.index')->with('success', 'Produk berhasil diperbarui oleh ' . auth()->user()->name);
+        return redirect()->route('produk.index')->with('success', 'Produk berhasil diperbarui oleh ' . $user->name);
     }
 
     public function destroy(Produk $produk)
     {
+        /** @var \App\Models\User $user */
+        $user = auth()->user();
+
         // Catat history sebelum menghapus
         ProdukHistory::create([
             'produk_id' => $produk->id,
-            'user_id' => auth()->id(),
+            'user_id' => $user->id,
             'action' => 'deleted',
             'old_values' => $produk->only(['Nama_produk', 'Deskripsi', 'Harga', 'Stok']),
-            'changes_description' => 'Produk dihapus oleh ' . auth()->user()->name
+            'changes_description' => 'Produk dihapus oleh ' . $user->name
         ]);
 
         $produk->delete();
-        return redirect()->route('produk.index')->with('success', 'Produk berhasil dihapus oleh ' . auth()->user()->name);
+        return redirect()->route('produk.index')->with('success', 'Produk berhasil dihapus oleh ' . $user->name);
     }
 
     public function detail(Produk $produk)
